@@ -14,7 +14,7 @@ namespace Curry {
             _begin = begin;
             _end = end;
         }
-        public char head {
+        public char Head {
             get {
                 return this[0];
             }
@@ -29,16 +29,16 @@ namespace Curry {
                 return _begin == _end;
             }
         }
-        public String prefix(int size) {
+        public String Prefix(int size) {
             size = (_end - _begin) < size ? (_end - _begin) : size;
             return _str.Substring(_begin, size).ToLower();
         }
-        public bool eat() {
+        public bool Eat() {
             if(IsEnd) return false;
             _begin++;
             return true;
         }
-        public bool eat(int size) {
+        public bool Eat(int size) {
             if(_begin + size > _end) {
                 return false;
             }
@@ -59,7 +59,7 @@ namespace Curry {
         public abstract T Parse();
         public char head {
             get {
-                return _strRange.head;
+                return _strRange.Head;
             }
         }
         public char this[int offset] {
@@ -72,14 +72,14 @@ namespace Curry {
                 return _strRange.IsEnd;
             }
         }
-        public String prefix(int size) {
-            return _strRange.prefix(size);
+        public String Prefix(int size) {
+            return _strRange.Prefix(size);
         }
-        public bool eat() {
-            return _strRange.eat();
+        public bool Eat() {
+            return _strRange.Eat();
         }
-        public bool eat(int size) {
-            return _strRange.eat(size);
+        public bool Eat(int size) {
+            return _strRange.Eat(size);
         }
 
     }
@@ -89,31 +89,31 @@ namespace Curry {
                 throw new Exception("Parse error");
             }
             if(head == 'x') {
-                eat();
+                Eat();
                 return new Id();
             }
             else if(head <= '9' && head >= '0') {
                 int num = head - '0';
-                eat();
+                Eat();
                 while(!IsEnd && head <= '9' && head >= '0') {
                     num *= 10;
                     num += head - '0';
-                    eat();
+                    Eat();
                 }
                 return new Const(num);
             }
             else if(head == 'e') {
-                eat();
+                Eat();
                 return new Const(MathF.E);
             }
-            else if(prefix(2) == "pi") {
-                eat(2);
+            else if(Prefix(2) == "pi") {
+                Eat(2);
                 return new Const(MathF.PI);
             }
             else if(head == '(') {
-                eat();
+                Eat();
                 var e = Born<Ex12>().Parse();
-                eat();
+                Eat();
                 return e;
             }
             else {
@@ -148,16 +148,16 @@ namespace Curry {
     }
     public class Ex1 : OneOpEx<Ex0> {
         public override (String name, Func<float, float> op) ParseOneOp() {
-            if(prefix(3) == "sin") {
-                eat(3);
+            if(Prefix(3) == "sin") {
+                Eat(3);
                 return ("sin", x => MathF.Sin(x));
             }
-            if(prefix(3) == "cos") {
-                eat(3);
+            if(Prefix(3) == "cos") {
+                Eat(3);
                 return ("cos", x => MathF.Cos(x));
             }
-            if(prefix(2) == "ln") {
-                eat(2);
+            if(Prefix(2) == "ln") {
+                Eat(2);
                 return ("ln", x => MathF.Log(x));
             }
             return (null, null);
@@ -167,7 +167,7 @@ namespace Curry {
         public override (String name, Func<float, float, float> op) ParseTwoOp() {
             if(IsEnd) return (null, null);
             if(head == '^') {
-                eat();
+                Eat();
                 return ("pow", (x, y) => MathF.Pow(x, y));
             }
             return (null, null);
@@ -177,11 +177,11 @@ namespace Curry {
         public override (String, Func<float, float, float>) ParseTwoOp() {
             if(IsEnd) return (null, null);
             if(head == '*') {
-                eat();
+                Eat();
                 return ("*", (x, y) => x * y);
             }
             if(head == '/') {
-                eat();
+                Eat();
                 return ("/", (x, y) => x / y);
             }
             return (null, null);
@@ -191,15 +191,15 @@ namespace Curry {
         public override (String, Func<float, float>) ParseOneOp() {
             if(IsEnd) return (null, null);
             if(head == '+') {
-                eat(1);
+                Eat(1);
                 return (null, null);
             }
             if(head == '-') {
-                eat(1);
+                Eat(1);
                 return ("-", x => -x);
             }
             if (head == '~') {
-                eat(1);
+                Eat(1);
                 return ("~", x => x == 0 ? 1 : 0);
             }
             return (null, null);
@@ -209,11 +209,11 @@ namespace Curry {
         public override (String, Func<float, float, float>) ParseTwoOp() {
             if(IsEnd) return (null, null);
             if(head == '+') {
-                eat();
+                Eat();
                 return ("+", (x, y) => x + y);
             }
             if(head == '-') {
-                eat();
+                Eat();
                 return ("-", (x, y) => x - y);
             }
             return (null, null);
@@ -226,9 +226,9 @@ namespace Curry {
         public override (String, Func<float, float, float>) ParseTwoOp() {
             if(IsEnd) return (null, null);
             if(head == '<') {
-                eat();
+                Eat();
                 if(head == '=') {
-                    eat();
+                    Eat();
                     return ("<=", (x, y) => boolToFloat(x <= y));
                 }
                 else {
@@ -236,21 +236,21 @@ namespace Curry {
                 }
             }
             if(head == '>') {
-                eat();
+                Eat();
                 if(head == '=') {
-                    eat();
+                    Eat();
                     return (">=", (x, y) => boolToFloat(x >= y));
                 }
                 else {
                     return (">", (x, y) => boolToFloat(x > y));
                 }
             }
-            if(prefix(2) == "==") {
-                eat(2);
+            if(Prefix(2) == "==") {
+                Eat(2);
                 return ("==", (x, y) => boolToFloat(x == y));
             }
-            if(prefix(2) == "~=") {
-                eat(2);
+            if(Prefix(2) == "~=") {
+                Eat(2);
                 return ("~=", (x, y) => boolToFloat(x != y));
             }
             return (null, null);
@@ -260,8 +260,8 @@ namespace Curry {
     public class Ex11 : TwoOpEx<Ex8> {
         public override (String, Func<float, float, float>) ParseTwoOp() {
             if(IsEnd) return (null, null);
-            if(prefix(2) == "&&") {
-                eat(2);
+            if(Prefix(2) == "&&") {
+                Eat(2);
                 return ("&&", (x, y) => (x != 0) && (y != 0) ? 1 : 0);
             }
             return (null, null);
@@ -270,8 +270,8 @@ namespace Curry {
     public class Ex12 : TwoOpEx<Ex11> {
         public override (String, Func<float, float, float>) ParseTwoOp() {
             if(IsEnd) return (null, null);
-            if(prefix(2) == "||") {
-                eat(2);
+            if(Prefix(2) == "||") {
+                Eat(2);
                 return ("||", (x, y) => (x != 0) || (y != 0) ? 1 : 0);
             }
             return (null, null);
